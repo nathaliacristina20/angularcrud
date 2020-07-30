@@ -1,3 +1,4 @@
+import { DepartmentService } from './../../services/department.service';
 import { Component, OnInit } from '@angular/core';
 
 import { Department } from '../../interfaces/department';
@@ -5,37 +6,50 @@ import { Department } from '../../interfaces/department';
 @Component({
   selector: 'app-department',
   templateUrl: './department.component.html',
-  styleUrls: ['./department.component.scss']
+  styleUrls: ['./department.component.scss'],
 })
 export class DepartmentComponent implements OnInit {
-
-  constructor() { }
+  constructor(private departmentService: DepartmentService) {}
 
   depName: string;
   departments: Department[] = [
     {
-      name: "Departamento de Vendas",
-      id: '2'
-    }
+      name: 'Departamento de Vendas',
+      id: '2',
+    },
   ];
 
   ngOnInit(): void {
+    this.departmentService.get()
+    .subscribe(
+      (data) => {
+        this.departments = data;
+      },
+      (error) => {
+        console.error(error);
+      }
+    )
   }
 
-  save(){
-
+  save() {
+    this.departmentService.add({ name: this.depName }).subscribe(
+      (data) => {
+        console.log(data);
+        this.clearFields();
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
   }
 
-  cancel(){
-
+  clearFields(){
+    this.depName = "";
   }
 
-  update(department: Department){
+  cancel() {}
 
-  }
+  update(department: Department) {}
 
-  delete(department: Department){
-
-  }
-
+  delete(department: Department) {}
 }
