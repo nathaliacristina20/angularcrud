@@ -24,11 +24,6 @@ export class DepartmentService {
     if (!this.loaded) {
       this.http
         .get<Department[]>(this.url)
-        .pipe(
-          tap((deps) => {
-            console.log(deps);
-          })
-        )
         .subscribe(this.departmentSubject$);
       this.loaded = true;
     }
