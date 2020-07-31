@@ -13,7 +13,9 @@ export class DepartmentService {
   readonly url = 'http://localhost:3333/departments';
 
   // O behaviorSubject retorna apenas o ultimo elemento
-  private departmentSubject$: BehaviorSubject<Department[]> = new BehaviorSubject<Department[]>(null);
+  private departmentSubject$: BehaviorSubject<
+    Department[]
+  > = new BehaviorSubject<Department[]>(null);
   private loaded = false;
 
   constructor(private http: HttpClient) {}
@@ -37,11 +39,35 @@ export class DepartmentService {
     return this.departmentSubject$.asObservable();
   }
 
-  add(department: Omit<Department, 'id'>): Observable<Department> {
+  add(department: Omit<Department, '_id'>): Observable<Department> {
     return this.http
       .post<Department>(this.url, department)
       .pipe(
         tap((dep: Department) => this.departmentSubject$.getValue().push(dep))
       );
+  }
+
+  delete(department: Department): Observable<Department> {
+    return this.http.delete<Department>(`${this.url}/${department._id}`).pipe(
+      tap(() => {
+        const departments = this.departmentSubject$.getValue();
+        const findDepartment = departments.findIndex((d) => d._id === department._id);
+        if (findDepartment >= 0){
+          departments.splice(findDepartment, 1);
+        }
+      })
+    );
+  }
+
+  update(department: Department): Observable<Department> {
+    return this.http.patch<Department>(`${this.url}/${department._id}`, department).pipe(
+      tap((dep) => {
+        const departments = this.departmentSubject$.getValue();
+        const findDepartment = departments.findIndex((d) => d._id === dep._id);
+        if (findDepartment >= 0){
+          departments[findDepartment].name = dep.name;
+        }
+      })
+    );
   }
 }
