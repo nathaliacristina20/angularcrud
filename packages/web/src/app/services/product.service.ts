@@ -1,3 +1,4 @@
+import { Department } from './../interfaces/department';
 import { DepartmentService } from './department.service';
 import { Product } from './../interfaces/product';
 import { HttpClient } from '@angular/common/http';
@@ -29,8 +30,8 @@ export class ProductService {
       ).pipe(
         map(([products, departments]) => {
           for (let product of products) {
-            let arrayDepartments = product.department as string[];
-            product.department = arrayDepartments.map((id) =>
+            let arrayDepartments = product.departments as string[];
+            product.departments = arrayDepartments.map((id) =>
               departments.find((dep) => dep._id === id)
             );
           }
@@ -43,5 +44,42 @@ export class ProductService {
       this.loaded = true;
     }
     return this.productsSubject$.asObservable();
+  }
+
+  add(product: Product): Observable<Product>{
+    const departments = (product.departments as Department[]).map(department => department._id);
+    return this.http.post<Product>(this.url, { ...product, departments})
+    .pipe(
+      tap((prod) => {
+          this.productsSubject$.getValue()
+            .push({...product, _id: prod._id})
+        })
+    )
+  }
+
+  update(product: Product): Observable<Product> {
+    const departments = (product.departments as Department[]).map(department => department._id);
+    return this.http.patch<Product>(`${this.url}/${product._id}`, { ...product, departments}).pipe(
+      tap((prod) => {
+        const products = this.productsSubject$.getValue();
+        const findProduct = products.findIndex((prod) => prod._id === product._id);
+        if (findProduct >= 0){
+          products[findProduct] = prod;
+        }
+      })
+    );
+  }
+
+  delete(product: Product): Observable<Product> {
+    return this.http.delete<Product>(`${this.url}/${product._id}`)
+      .pipe(
+        tap(() => {
+          const products = this.productsSubject$.getValue();
+          const findProduct = products.findIndex((d) => d._id === product._id);
+          if (findProduct >= 0){
+            products.splice(findProduct, 1);
+          }
+        })
+    );
   }
 }

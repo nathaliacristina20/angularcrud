@@ -1,9 +1,9 @@
 import { Department } from "./department";
 
 export interface Product {
-  id: string;
+  _id: string;
   name: string;
-  department: Department[] | Array<string>;
+  departments: Department[] | Array<string>;
   stock: number;
   price: number;
 }
