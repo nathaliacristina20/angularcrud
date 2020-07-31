@@ -12,11 +12,16 @@ class Database {
   }
 
   mongo() {
-    this.mongoConnection = mongoose.connect('mongodb://localhost:27017/crud', {
+
+    const { MONGO_URL } = process.env;
+
+    this.mongoConnection = mongoose.connect(MONGO_URL, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
+
   }
+
 }
 
 export default new Database();
