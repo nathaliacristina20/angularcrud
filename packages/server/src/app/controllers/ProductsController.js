@@ -1,6 +1,6 @@
 import Department from "../schemas/Department";
 
-class DepartmentController {
+class ProductsController {
   async index(_, res) {
     try {
       const departments = await Department.find();
@@ -72,4 +72,4 @@ class DepartmentController {
   }
 }
 
-export default new DepartmentController();
+export default new ProductsController();
