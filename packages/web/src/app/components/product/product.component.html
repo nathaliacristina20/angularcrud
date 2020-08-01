@@ -1,0 +1,57 @@
+<mat-card fxFlex>
+  <mat-card-title>Products Form</mat-card-title>
+  <mat-card-content>
+    <form #form="ngForm" [formGroup]="productForm" (ngSubmit)="save()" fxLayout="column" fxLayoutAlign="space-between">
+
+      <mat-form-field>
+        <input matInput placeholder="Name" formControlName="name">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="number" placeholder="Stock" formControlName="stock">
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput placeholder="Price" formControlName="price">
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Departments</mat-label>
+        <mat-select formControlName="departments" multiple>
+          <mat-option *ngFor="let department of departments" [value]="department">{{department.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div fxLayout="row" fxLayoutAlign="end end">
+        <button mat-button color="primary" fxFlex="10" type="submit">Save</button>
+        <button mat-button color="warn" fxFlex="10" type="reset">Cancel</button>
+      </div>
+    </form>
+
+    <ng-container *ngIf="products?.length>0; else empty">
+
+      <mat-list>
+        <h3 mat-subheader>Products</h3>
+        <mat-list-item *ngFor="let product of products">
+          <mat-icon mat-list-icon>folder</mat-icon>
+          <h4 mat-line>{{product.name}}</h4>
+          <h4 mat-line>Price: {{product.price | currency: "R$ "}} - Stock: {{product.stock}}</h4>
+          <mat-chip-list mat-line>
+            <mat-chip *ngFor="let department of product.departments">{{department.name}}</mat-chip>
+          </mat-chip-list>
+          <button mat-icon-button color="accent" (click)="delete(product)">
+            <mat-icon>delete</mat-icon>
+          </button>
+          <button mat-icon-button color="primary" (click)="update(product)">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </mat-list-item>
+      </mat-list>
+    </ng-container>
+
+    <ng-template #empty>
+      <div>
+        <em>Empty</em>
+      </div>
+    </ng-template>
+
+  </mat-card-content>
+</mat-card>
