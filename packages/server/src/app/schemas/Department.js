@@ -8,6 +8,7 @@ const DepartmentSchema = new mongoose.Schema(
     },
   },
   {
+    versionKey: false,
     timestamps: true,
   }
 );

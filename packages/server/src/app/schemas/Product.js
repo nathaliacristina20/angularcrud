@@ -13,15 +13,15 @@ const ProductSchema = new mongoose.Schema(
     stock: {
       type: Number,
       required: true,
-      default: false,
     },
-    stock: {
+    departments: [{
       type: mongoose.Schema.Types.ObjectId,
       ref: "Department",
       required: true,
-    },
+    }],
   },
   {
+    versionKey: false,
     timestamps: true,
   }
 );

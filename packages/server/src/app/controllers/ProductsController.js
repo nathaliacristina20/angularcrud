@@ -1,75 +1,43 @@
-import Department from "../schemas/Department";
+import Product from "../schemas/Product";
+
+import CreateProductService from "../services/CreateProductService";
+import UpdateProductService from "../services/UpdateProductService";
 
 class ProductsController {
   async index(_, res) {
-    try {
-      const departments = await Department.find();
-      return res.json(departments);
-    } catch (err) {
-      return res.status(500).json({
-        message: {
-          errorMessage: "Internal Server Error",
-        },
-      });
-    }
+    const products = await Product.find();
+    return res.json(products);
   }
 
   async store(req, res) {
-    try {
-      const { name } = req.body;
-      const departmentSchema = new Department({ name });
-      const department = await departmentSchema.save();
-      return res.json(department);
-    } catch (err) {
-      return res.status(500).json({
-        message: {
-          errorMessage: "Internal Server Error",
-        },
-      });
-    }
+    const { name, price, stock, departments } = req.body;
+    const product = await CreateProductService.run({
+      name,
+      price,
+      stock,
+      departments,
+    });
+    return res.json(product);
   }
 
   async update(req, res) {
-    try {
-      const { id } = req.params;
-      const department = await Department.findById({ _id: id });
-
-      if (!department) {
-        return res.status(400).json({
-          message: {
-            errorMessage: "Not found",
-          },
-        });
-      }
-
-      department.name = req.body.name;
-      await department.save();
-
-      return res.json(department);
-      
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json({
-        message: {
-          errorMessage: "Internal Server Error",
-        },
-      });
-    }
+    const { id } = req.params;
+    const { name, price, stock, departments } = req.body;
+    const product = await UpdateProductService.run({
+      id,
+      name,
+      price,
+      stock,
+      departments,
+    });
+    return res.json(product);
   }
 
   async delete(req, res) {
-    try {
-      const { id } = req.params;
-      await Department.deleteOne({ _id: id });
-      return res.status(204).send("");
-    } catch (err) {
-      return res.status(500).json({
-        error: {
-          message: "Internal Server Error",
-        },
-      });
-    }
+    const { id } = req.params;
+    await Product.deleteOne({ _id: id });
+    return res.status(204).send("");
   }
 }
 
-export default new ProductsController();
+export default ProductsController;
