@@ -55,13 +55,14 @@ export class DepartmentComponent implements OnInit {
       this.departmentService.add({ name: this.depName }).subscribe(
         (data) => {
           this.notify('Inserted!');
-          this.clearFields();
         },
         (error) => {
           console.error(error);
         }
       );
     }
+
+    this.clearFields();
   }
 
   clearFields() {
@@ -72,18 +73,21 @@ export class DepartmentComponent implements OnInit {
   cancel() {}
 
   update(department: Department) {
-    console.log('department ', department);
     this.depName = department.name;
     this.departmentEditing = department;
   }
 
   delete(department: Department) {
-    console.log("delete", department);
     this.departmentService.delete(department)
       .subscribe(
         () => this.notify('Removed!'),
         err => {
-          console.error(err);
+          if (err.error && err.error.message){
+            this.notify(err.error.message);
+          } else {
+            this.notify('An unexpected error has occurred. Try again later.')
+          }
+
         }
       )
   }
