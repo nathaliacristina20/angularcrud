@@ -1,5 +1,5 @@
 {
-  "name": "crud-server",
+  "name": "@angularcrud/server",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Nathalia Oliveira <nathaliacristina20@hotmail.com>",
